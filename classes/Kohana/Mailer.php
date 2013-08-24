@@ -28,7 +28,8 @@ class Kohana_Mailer
         self::include_library();
 
         $mail   = new PHPMailer();
-        $config = Kohana::config('mailer');
+        $config = Kohana::$config->load('mailer');
+
         $from   = $config->get( 'from' );
 
         if( $config->get( 'mode', 'mail' ) == 'smtp' ) {
@@ -41,9 +42,10 @@ class Kohana_Mailer
             $mail->Port = Arr::get( $smtp, 'port' );
             $mail->Username = Arr::get( $smtp, 'username' );
             $mail->Password = Arr::get( $smtp, 'password' );
+        } else {
+            $mail->IsMail();
         }
 
-        $mail->IsMail();
         $mail->CharSet      = "UTF-8";
 
         $mail->From         = Arr::get( $from, 'mail' );
