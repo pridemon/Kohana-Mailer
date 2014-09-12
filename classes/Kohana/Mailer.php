@@ -11,7 +11,7 @@ class Kohana_Mailer
      */
     protected static function include_library()
     {
-        require_once Kohana::find_file( 'vendor/phpmailer', 'class.phpmailer' );
+        //require_once Kohana::find_file( 'vendor/phpmailer', 'class.phpmailer' );
     }
 
     /**
