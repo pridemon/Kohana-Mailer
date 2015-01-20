@@ -23,7 +23,7 @@ class Kohana_Mailer
      * @param       string      Email body
      * @return      boolean
      */
-    public static function send( $to, $name, $subject, $body )
+    public static function send( $to, $name, $subject, $body, $unsubscribe = array(), $list_id = null )
     {
         self::include_library();
 
@@ -52,6 +52,23 @@ class Kohana_Mailer
         $mail->FromName     = Arr::get( $from, 'name' );
 
         $mail->Subject      = $subject;
+
+        if ($unsubscribe) {
+
+            foreach($unsubscribe as $k => $val) {
+                $unsubscribe[$k] = '<'.$val.'>';
+            }
+
+            $unsubscribe = implode(', ',$unsubscribe);
+
+            $mail->AddCustomHeader(
+                "List-Unsubscribe", $unsubscribe
+            );
+
+        }
+        if ($list_id) {
+            $mail->AddCustomHeader("List-id", $list_id);
+        }
 
         // Prepare HTML and Alt message
         $mail->MsgHTML( $body );
