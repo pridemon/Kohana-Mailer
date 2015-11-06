@@ -13,14 +13,14 @@ class Kohana_Mailer
      * @param string $body Email body
      * @param array $unsubscribe list of custom header List-Unsubscribe
      * @param null|string $list_id custom header List-id
-     * @param null|string $from Sender
+     * @param null|array ['mail' => '', 'name' => ''] $from Sender
      *
      * @return bool
      * @throws Exception
      * @throws Kohana_Exception
      * @throws phpmailerException
      */
-    public static function send( $to, $name, $subject, $body, $unsubscribe = [], $list_id = null, $from = null)
+    public static function send( $to, $name, $subject, $body, $unsubscribe = [], $list_id = null, array $from = null)
     {
         $mail   = new PHPMailer();
         $config = Kohana::$config->load('mailer');
