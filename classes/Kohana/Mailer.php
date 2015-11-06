@@ -7,20 +7,27 @@
 class Kohana_Mailer
 {
     /**
-     * Send message.
+     * @param string $to Email which message is being send to
+     * @param string $name Username which message is being send to
+     * @param string $subject Email subject
+     * @param string $body Email body
+     * @param array $unsubscribe list of custom header List-Unsubscribe
+     * @param null|string $list_id custom header List-id
+     * @param null|string $from Sender
      *
-     * @param       string      Email which message is being send to
-     * @param       string      Username which message is being send to
-     * @param       string      Email subject
-     * @param       string      Email body
-     * @return      boolean
+     * @return bool
+     * @throws Exception
+     * @throws Kohana_Exception
+     * @throws phpmailerException
      */
-    public static function send( $to, $name, $subject, $body, $unsubscribe = array(), $list_id = null )
+    public static function send( $to, $name, $subject, $body, $unsubscribe = [], $list_id = null, $from = null)
     {
         $mail   = new PHPMailer();
         $config = Kohana::$config->load('mailer');
 
-        $from   = $config->get( 'from' );
+        if (!$from) {
+            $from = $config->get( 'from' );
+        }
 
         if( $config->get( 'mode', 'mail' ) == 'smtp' ) {
             $smtp = $config->get( 'smtp' );
