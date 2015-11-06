@@ -7,14 +7,6 @@
 class Kohana_Mailer
 {
     /**
-     * Find and include phpMailer library
-     */
-    protected static function include_library()
-    {
-        //require_once Kohana::find_file( 'vendor/phpmailer', 'class.phpmailer' );
-    }
-
-    /**
      * Send message.
      *
      * @param       string      Email which message is being send to
@@ -25,8 +17,6 @@ class Kohana_Mailer
      */
     public static function send( $to, $name, $subject, $body, $unsubscribe = array(), $list_id = null )
     {
-        self::include_library();
-
         $mail   = new PHPMailer();
         $config = Kohana::$config->load('mailer');
 
