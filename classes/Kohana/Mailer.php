@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Helper which is responsible for sending emails.
  *
@@ -13,64 +14,52 @@ class Kohana_Mailer
      * @param string $body Email body
      * @param array $unsubscribe list of custom header List-Unsubscribe
      * @param null|string $list_id custom header List-id
-     * @param null|array ['mail' => '', 'name' => ''] $from Sender
+     * @param null|Kohana_Config_Group $config
      *
      * @return bool
      * @throws Exception
      * @throws Kohana_Exception
      * @throws phpmailerException
      */
-    public static function send( $to, $name, $subject, $body, $unsubscribe = [], $list_id = null, array $from = null)
+    public static function send($to, $name, $subject, $body, $unsubscribe = [], $list_id = null, Kohana_Config_Group $config = null)
     {
-        $mail   = new PHPMailer();
-        $config = Kohana::$config->load('mailer');
+        $mail = new PHPMailer();
 
-        if (!$from) {
-            $from = $config->get( 'from' );
+        if (!$config) {
+            $config = Kohana::$config->load('mailer');
         }
 
-        if( $config->get( 'mode', 'mail' ) == 'smtp' ) {
-            $smtp = $config->get( 'smtp' );
-
+        if ($config->get('mode', 'mail') == 'smtp' and $smtp = $config->get('smtp')) {
             $mail->IsSMTP();
             $mail->SMTPAuth = true;
             $mail->SMTPSecure = "ssl";
-            $mail->Host = Arr::get( $smtp, 'host' );
-            $mail->Port = Arr::get( $smtp, 'port' );
-            $mail->Username = Arr::get( $smtp, 'username' );
-            $mail->Password = Arr::get( $smtp, 'password' );
+            $mail->Host = Arr::get($smtp, 'host');
+            $mail->Port = Arr::get($smtp, 'port');
+            $mail->Username = Arr::get($smtp, 'username');
+            $mail->Password = Arr::get($smtp, 'password');
         } else {
             $mail->IsMail();
         }
 
-        $mail->CharSet      = "UTF-8";
-
-        $mail->From         = Arr::get( $from, 'mail' );
-        $mail->FromName     = Arr::get( $from, 'name' );
-
-        $mail->Subject      = $subject;
+        $mail->CharSet = "UTF-8";
+        $mail->From = $config->from['mail'];
+        $mail->FromName = $config->from['name'];
+        $mail->Subject = $subject;
 
         if ($unsubscribe) {
-
-            foreach($unsubscribe as $k => $val) {
-                $unsubscribe[$k] = '<'.$val.'>';
+            foreach ($unsubscribe as $k => $val) {
+                $unsubscribe[$k] = '<' . $val . '>';
             }
-
-            $unsubscribe = implode(', ',$unsubscribe);
-
-            $mail->AddCustomHeader(
-                "List-Unsubscribe", $unsubscribe
-            );
-
+            $mail->AddCustomHeader("List-Unsubscribe", implode(', ', $unsubscribe));
         }
+
         if ($list_id) {
-            $mail->AddCustomHeader("List-id", $list_id);
+            $mail->AddCustomHeader("List-id", '<' . $list_id . '.' . Kohana::$config->load('url')->trusted_hosts . '>');
         }
 
         // Prepare HTML and Alt message
-        $mail->MsgHTML( $body );
-
-        $mail->AddAddress( $to, $name );
+        $mail->MsgHTML($body);
+        $mail->AddAddress($to, $name);
 
         return $mail->Send();
     }
