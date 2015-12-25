@@ -20,7 +20,7 @@ class Kohana_Mailer
      * @throws Kohana_Exception
      * @throws phpmailerException
      */
-    public static function send($to, $name, $subject, $body, $attachments = [], $unsubscribe = [], $list_id = null, Kohana_Config_Group $config = null)
+    public static function send($to, $name, $subject, $body, $unsubscribe = [], $list_id = null, Kohana_Config_Group $config = null, $attachments = [])
     {
         $mail = new PHPMailer();
 
