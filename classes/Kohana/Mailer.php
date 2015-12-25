@@ -12,16 +12,15 @@ class Kohana_Mailer
      * @param string $name Username which message is being send to
      * @param string $subject Email subject
      * @param string $body Email body
+     * @param array $attachments attached files ['filename', 'name']
      * @param array $unsubscribe list of custom header List-Unsubscribe
      * @param null|string $list_id custom header List-id
      * @param null|Kohana_Config_Group $config
-     *
      * @return bool
-     * @throws Exception
      * @throws Kohana_Exception
      * @throws phpmailerException
      */
-    public static function send($to, $name, $subject, $body, $unsubscribe = [], $list_id = null, Kohana_Config_Group $config = null)
+    public static function send($to, $name, $subject, $body, $attachments = [], $unsubscribe = [], $list_id = null, Kohana_Config_Group $config = null)
     {
         $mail = new PHPMailer();
 
@@ -60,7 +59,11 @@ class Kohana_Mailer
         // Prepare HTML and Alt message
         $mail->MsgHTML($body);
         $mail->AddAddress($to, $name);
-
+        if(count($attachments)>0){
+            foreach($attachments as $name=>$attachment) {
+                $mail->addAttachment($attachment, $name);
+            }
+        }
         return $mail->Send();
     }
 }
