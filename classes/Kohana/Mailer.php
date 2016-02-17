@@ -22,7 +22,7 @@ class Kohana_Mailer
      */
     public static function send($to, $name, $subject, $body, $unsubscribe = [], $list_id = null, Kohana_Config_Group $config = null, $attachments = [])
     {
-        $mail = new PHPMailer();
+        $mail = new PHPMailer(true);
 
         if (!$config) {
             $config = Kohana::$config->load('mailer');
@@ -64,6 +64,12 @@ class Kohana_Mailer
                 $mail->addAttachment($attachment, $name);
             }
         }
-        return $mail->Send();
+
+        try {
+            return $mail->Send();
+        } catch (phpmailerException $exc) {
+            Kohana::$log->add(Log::ERROR, $exc->getMessage())->write();
+            return false;
+        }
     }
 }
