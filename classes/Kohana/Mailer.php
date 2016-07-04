@@ -54,7 +54,7 @@ class Kohana_Mailer
             }
 
             if ($list_id) {
-                $mail->AddCustomHeader("List-id", '<' . $list_id . '.' . Kohana::$config->load('url')->trusted_hosts . '>');
+                $mail->AddCustomHeader("List-id", '<' . $list_id . '.' . Kohana::$config->load('url')->domain . '>');
             }
 
             // Prepare HTML and Alt message
