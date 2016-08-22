@@ -22,54 +22,49 @@ class Kohana_Mailer
      */
     public static function send($to, $name, $subject, $body, $unsubscribe = [], $list_id = null, Kohana_Config_Group $config = null, $attachments = [])
     {
-        try {
-            $mail = new PHPMailer(true);
+        $mail = new PHPMailer(true);
 
-            if (!$config) {
-                $config = Kohana::$config->load('mailer');
-            }
-
-            if ($config->get('mode', 'mail') == 'smtp' and $smtp = $config->get('smtp')) {
-                $mail->IsSMTP();
-                $mail->SMTPAuth = true;
-                $mail->SMTPSecure = "ssl";
-                $mail->Host = Arr::get($smtp, 'host');
-                $mail->Port = Arr::get($smtp, 'port');
-                $mail->Username = Arr::get($smtp, 'username');
-                $mail->Password = Arr::get($smtp, 'password');
-            } else {
-                $mail->IsMail();
-            }
-
-            $mail->CharSet = "UTF-8";
-            $mail->From = $config->from['mail'];
-            $mail->FromName = $config->from['name'];
-            $mail->Subject = $subject;
-
-            if ($unsubscribe) {
-                foreach ($unsubscribe as $k => $val) {
-                    $unsubscribe[$k] = '<' . $val . '>';
-                }
-                $mail->AddCustomHeader("List-Unsubscribe", implode(', ', $unsubscribe));
-            }
-
-            if ($list_id) {
-                $mail->AddCustomHeader("List-id", '<' . $list_id . '.' . Kohana::$config->load('url')->domain . '>');
-            }
-
-            // Prepare HTML and Alt message
-            $mail->MsgHTML($body);
-            $mail->AddAddress($to, $name);
-            if(count($attachments)>0){
-                foreach($attachments as $name=>$attachment) {
-                    $mail->addAttachment($attachment, $name);
-                }
-            }
-
-            return $mail->Send();
-        } catch (phpmailerException $exc) {
-            Kohana::$log->add(Log::ERROR, $exc->getMessage())->write();
-            return false;
+        if (!$config) {
+            $config = Kohana::$config->load('mailer');
         }
+
+        if ($config->get('mode', 'mail') == 'smtp' and $smtp = $config->get('smtp')) {
+            $mail->IsSMTP();
+            $mail->SMTPAuth = true;
+            $mail->SMTPSecure = "ssl";
+            $mail->Host = Arr::get($smtp, 'host');
+            $mail->Port = Arr::get($smtp, 'port');
+            $mail->Username = Arr::get($smtp, 'username');
+            $mail->Password = Arr::get($smtp, 'password');
+        } else {
+            $mail->IsMail();
+        }
+
+        $mail->CharSet = "UTF-8";
+        $mail->From = $config->from['mail'];
+        $mail->FromName = $config->from['name'];
+        $mail->Subject = $subject;
+
+        if ($unsubscribe) {
+            foreach ($unsubscribe as $k => $val) {
+                $unsubscribe[$k] = '<' . $val . '>';
+            }
+            $mail->AddCustomHeader("List-Unsubscribe", implode(', ', $unsubscribe));
+        }
+
+        if ($list_id) {
+            $mail->AddCustomHeader("List-id", '<' . $list_id . '.' . Kohana::$config->load('url')->domain . '>');
+        }
+
+        // Prepare HTML and Alt message
+        $mail->MsgHTML($body);
+        $mail->AddAddress($to, $name);
+        if(count($attachments)>0){
+            foreach($attachments as $name=>$attachment) {
+                $mail->addAttachment($attachment, $name);
+            }
+        }
+
+        return $mail->Send();
     }
 }
