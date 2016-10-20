@@ -20,7 +20,7 @@ class Kohana_Mailer
      * @throws Kohana_Exception
      * @throws phpmailerException
      */
-    public static function send($to, $name, $subject, $body, $unsubscribe = [], $list_id = null, Kohana_Config_Group $config = null, $attachments = [])
+    public static function send($to, $name, $subject, $body, $unsubscribe = [], $list_id = null, Kohana_Config_Group $config = null, $attachments = [], $enableDebug = false)
     {
         $mail = new PHPMailer(true);
 
@@ -44,8 +44,11 @@ class Kohana_Mailer
         $mail->From = $config->from['mail'];
         $mail->FromName = $config->from['name'];
         $mail->Subject = $subject;
-        $mail->SMTPDebug = 3;
-        $mail->Debugoutput = 'error_log';
+
+        if ($enableDebug) {
+            $mail->SMTPDebug = 3;
+            $mail->Debugoutput = 'error_log';
+        }
 
         if ($unsubscribe) {
             foreach ($unsubscribe as $k => $val) {
