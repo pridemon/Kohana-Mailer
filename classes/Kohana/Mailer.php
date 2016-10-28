@@ -47,7 +47,12 @@ class Kohana_Mailer
 
         if ($enableDebug) {
             $mail->SMTPDebug = 3;
-            $mail->Debugoutput = 'error_log';
+            //$mail->Debugoutput = 'error_log';
+            $mail->Debugoutput = function($str, $level) {
+                \Kohana::$log->detach_all();
+                \Kohana::$log->attach(new \Log_File(APPPATH . 'logs/smtp'), array(\Log::INFO), \Log::INFO);
+                Kohana::$log->add(Log::INFO, $str)->write();
+            };
         }
 
         if ($unsubscribe) {
