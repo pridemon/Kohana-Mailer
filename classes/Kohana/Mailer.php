@@ -31,9 +31,10 @@ class Kohana_Mailer
         if ($config->get('mode', 'mail') == 'smtp' and $smtp = $config->get('smtp')) {
             $mail->IsSMTP();
             $mail->SMTPAuth = true;
-            $mail->SMTPSecure = "ssl";
+            $mail->SMTPAutoTLS = false;
+            //$mail->SMTPSecure = "ssl";
             $mail->Host = Arr::get($smtp, 'host');
-            $mail->Port = Arr::get($smtp, 'port');
+            $mail->Port = 2525;//Arr::get($smtp, 'port');
             $mail->Username = Arr::get($smtp, 'username');
             $mail->Password = Arr::get($smtp, 'password');
         } else {
