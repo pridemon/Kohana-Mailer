@@ -5,7 +5,7 @@
     "license":     "BSD-3-Clause",
     "require": {
         "composer/installers": "~1.0",
-        "phpmailer/phpmailer": "5.2.10",
+        "phpmailer/phpmailer": "^5.2",
         "kohana/core":         ">=3.3",
         "php":                 ">=5.3.3"
     },
